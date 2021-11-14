@@ -41,5 +41,5 @@ func TestClient_UploadArtifact(t *testing.T) {
 	assert.True(t, c.(*client).isAuthenticated)
 	dat, err := os.ReadFile("test.mender")
 	assert.Nil(t, err)
-	fmt.Println(c.UploadArtifact(dat))
+	fmt.Println(c.UploadArtifact(dat, "desc"))
 }

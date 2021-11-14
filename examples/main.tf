@@ -12,13 +12,14 @@ provider "mender" {
   host     = "https://hosted.mender.io"
 }
 
-resource "mender_artifact" "reboot" {
+resource "mender_artifact" "my_release" {
   source_file = "<path of the mender artifact>"
+  description = "here is a description of my artifact"
 }
 
 output "id" {
-  value = mender_artifact.reboot.id
+  value = mender_artifact.my_release.id
 }
 output "md5" {
-  value = mender_artifact.reboot.md5
+  value = mender_artifact.my_release.md5
 }

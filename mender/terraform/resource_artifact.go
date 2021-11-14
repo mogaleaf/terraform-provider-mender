@@ -20,6 +20,10 @@ func (r resourceArtifact) GetSchema(_ context.Context) (tfsdk.Schema, diag.Diagn
 				Type:     types.StringType,
 				Required: true,
 			},
+			"description": {
+				Type:     types.StringType,
+				Optional: true,
+			},
 			"id": {
 				Type:     types.StringType,
 				Computed: true,
@@ -82,7 +86,12 @@ func (r resourceOrder) Create(ctx context.Context, req tfsdk.CreateResourceReque
 		)
 		return
 	}
-	id, err := r.p.client.UploadArtifact(dat)
+
+	var description string
+	if artifact.Description.Value != "" {
+		description = artifact.Description.Value
+	}
+	id, err := r.p.client.UploadArtifact(dat, description)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating artifact",
@@ -93,9 +102,10 @@ func (r resourceOrder) Create(ctx context.Context, req tfsdk.CreateResourceReque
 	md5 := fmt.Sprintf("%x", md5.Sum(dat))
 	// Generate resource state struct
 	var result = Artifact{
-		ID:         types.String{Value: id},
-		SourceFile: artifact.SourceFile,
-		Md5:        types.String{Value: string(md5)},
+		ID:          types.String{Value: id},
+		SourceFile:  artifact.SourceFile,
+		Md5:         types.String{Value: md5},
+		Description: types.String{Value: description},
 	}
 	diags = resp.State.Set(ctx, result)
 	resp.Diagnostics.Append(diags...)

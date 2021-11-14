@@ -10,6 +10,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
+const (
+	defaultHostProvider = "https://hosted.mender.io"
+)
+
 func New() tfsdk.Provider {
 	return &provider{}
 }
@@ -113,16 +117,12 @@ func (p *provider) Configure(ctx context.Context, req tfsdk.ConfigureProviderReq
 	// User must specify a host
 	var host string
 	if config.Host.Unknown {
-		// Cannot connect to client with an unknown value
-		resp.Diagnostics.AddError(
-			"Unable to create client",
-			"Cannot use unknown value as host",
-		)
-		return
-	}
-
-	if config.Host.Null {
+		host = defaultHostProvider
+	} else if config.Host.Null {
 		host = os.Getenv("MENDER_HOST")
+		if host == "" {
+			host = defaultHostProvider
+		}
 	} else {
 		host = config.Host.Value
 	}

@@ -18,7 +18,7 @@ var (
 
 type Client interface {
 	Login() error
-	UploadArtifact([]byte) (string, error)
+	UploadArtifact(data []byte, description string) (string, error)
 }
 
 func New(host, username, password string) Client {
@@ -65,10 +65,11 @@ func (c *client) Login() error {
 	return nil
 }
 
-func (c *client) UploadArtifact(fileData []byte) (string, error) {
+func (c *client) UploadArtifact(fileData []byte, description string) (string, error) {
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
+	writer.WriteField("description", description)
 	writer.WriteField("artifact", string(fileData))
 	writer.Close()
 
@@ -82,7 +83,6 @@ func (c *client) UploadArtifact(fileData []byte) (string, error) {
 		return "", fmt.Errorf("can't create request: %w", err)
 	}
 	req.Header = headers
-
 	client := &http.Client{}
 	response, err := client.Do(req)
 	if err != nil {
