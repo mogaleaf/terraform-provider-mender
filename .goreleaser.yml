@@ -6,7 +6,7 @@ before:
     - go mod tidy
 builds:
   - env:
-      # goreleaser does not work with CGO, it could also complicate
+      # goreleaser does not work  with CGO, it could also complicate
       # usage by users in CI/CD systems like Terraform Cloud where
       # they are unable to install libraries.
       - CGO_ENABLED=0
@@ -28,6 +28,8 @@ builds:
     ignore:
       - goos: darwin
         goarch: '386'
+      - goos: windows
+        goarch: arm
     binary: '{{ .ProjectName }}_v{{ .Version }}'
 archives:
   - format: zip
