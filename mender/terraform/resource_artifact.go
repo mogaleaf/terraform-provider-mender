@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
+	"io/ioutil"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -105,7 +106,7 @@ func modifiedFile(ctx context.Context, req tfsdk.ModifyAttributePlanRequest, res
 		return Artifact{}, nil, "", true
 	}
 
-	dat, err := os.ReadFile(artifact.SourceFile.Value)
+	dat, err := ioutil.ReadFile(artifact.SourceFile.Value)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"can't read file",
@@ -181,7 +182,7 @@ func (r resourceOrder) upload(ctx context.Context, plan *tfsdk.Plan, diag *diag.
 		return
 	}
 
-	dat, err := os.ReadFile(artifact.SourceFile.Value)
+	dat, err := ioutil.ReadFile(artifact.SourceFile.Value)
 	if err != nil {
 		diag.AddError(
 			"can't read file",
